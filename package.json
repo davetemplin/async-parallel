@@ -1,0 +1,34 @@
+{
+  "name": "async-parallel",
+  "version": "1.0.0",
+  "description": "Simplifies invoking tasks in parallel using TypeScript async/await",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davetemplin/async-parallel.git"
+  },
+  "keywords": [    
+    "async",
+    "await",
+    "typescript",
+    "promise",
+    "parallel"
+  ],
+  "author": {
+    "name": "Dave Templin",
+    "email": "davetemplin@hotmail.com",
+    "url": "https://github.com/davetemplin/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davetemplin/async-parallel/issues"
+  },
+  "homepage": "https://github.com/davetemplin/async-parallel#readme",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
+  }
+}
