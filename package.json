@@ -15,7 +15,11 @@
     "await",
     "typescript",
     "promise",
-    "parallel"
+    "parallel",
+    "each",
+    "map",
+    "invoke",
+    "foreach"
   ],
   "author": {
     "name": "Dave Templin",

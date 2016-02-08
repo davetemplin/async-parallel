@@ -82,4 +82,4 @@ done 303
 ```
 
 ## Additional Notes
-Setting Parallel.concurrency=1 causes all iterations to be performed in series to facilite debugging/troubleshooting.
+Setting Parallel.concurrency=1 causes all iterations to be performed in series to facilitate debugging/troubleshooting.

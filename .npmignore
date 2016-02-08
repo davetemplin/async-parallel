@@ -5,5 +5,4 @@ test.*
 tsconfig.json
 tsd.json
 typings
-*.md
 .vscode
