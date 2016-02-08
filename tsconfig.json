@@ -9,9 +9,7 @@
     "target": "es6"
   },
   "files": [
-    "typings/chai/chai.d.ts",
-    "typings/mocha/mocha.d.ts",
-    "typings/node/node.d.ts",
+    "typings/tsd.d.ts",
     "index.ts",
     "test.ts"
   ]
