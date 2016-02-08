@@ -56,6 +56,7 @@ $ npm install async-parallel
 
 Write some code...
 ```js
+import * as Parallel from 'async-parallel';
 (async function () {
     var list = [100, 200, 300];
     var start = new Date();
@@ -77,7 +78,7 @@ $ node index.js
 sleep 100
 sleep 200
 sleep 300
-done 302
+done 303
 ```
 
 ## Additional Notes
