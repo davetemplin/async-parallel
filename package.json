@@ -1,6 +1,6 @@
 {
   "name": "async-parallel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simplifies invoking tasks in parallel using TypeScript async/await",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/davetemplin/async-parallel.git"
   },
-  "keywords": [    
+  "keywords": [
     "async",
     "await",
     "typescript",
