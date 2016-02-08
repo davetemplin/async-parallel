@@ -1,4 +1,9 @@
-test
-.vscode
 index.ts
 *.js.map
+test
+test.*
+tsconfig.json
+tsd.json
+typings
+*.md
+.vscode
