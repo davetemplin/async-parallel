@@ -3,39 +3,65 @@
 
 export var concurrency = 0;
 
-export async function each<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}): Promise<void> {
-    if (list && list.length > 0) {
-        if (concurrency === 1) {
-            for (var item of list)
-                await action(item);
-        }
-        else {
-            var promises: Promise<T2>[] = [];
-            for (var item of list)
-                promises.push(action(item));
-            await Promise.all(promises);
-        }
+export class MultiError extends Error {
+    constructor(public list: Array<Error>) {
+        super(`${list.length} errors`);
     }
 }
 
-export async function invoke(list: {(): Promise<void>}[]): Promise<void> {
+export interface Options {
+    concurrency: number;
+}
+
+export async function each<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}, options?: Options): Promise<void> {
     if (list && list.length > 0) {
-        if (concurrency === 1) {
-            for (var action of list)
-                await action();
-        }
-        else {
-            var promises: Promise<void>[] = [];
-            for (var action of list)
-                promises.push(action());
-            await Promise.all(promises);            
-        }
+        list = list.slice(0);
+        var size = options ? options.concurrency : concurrency;
+        if (size === 0)
+            size = list.length;
+        await pool(size, async () => {
+            if (list.length > 0)
+                await action(list.shift());
+            return list.length > 0;
+        });
     }
 }
 
-export async function map<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}): Promise<T2[]> {
+export async function invoke(list: {(): Promise<void>}[], options?: Options): Promise<void> {
+    if (list && list.length > 0) {
+        list = list.slice(0);
+        var size = options ? options.concurrency : concurrency;
+        if (size === 0)
+            size = list.length;
+        await pool(size, async () => {
+            if (list.length > 0)
+                await list.shift().call(this);
+            return list.length > 0;
+        });
+    }
+}
+
+export async function map<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}, options?: Options): Promise<T2[]> {
     var result: T2[] = [];
     if (list && list.length > 0) {
+        list = list.slice(0);
+        var size = options ? options.concurrency : concurrency;
+        if (size === 0)
+            size = list.length;
+
+        var i = 0;
+        var result: T2[] = [];
+        await pool(size, async () => {
+            if (list.length > 0) {
+                var j = i++;
+                result[j] = await action(list.shift());
+            }
+            return list.length > 0;
+        });
+        return result;
+    }
+/*
+
         if (concurrency === 1) {
             for (var item of list)
                 result.push(await action(item));
@@ -68,18 +94,10 @@ export async function map<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}
         promise: Promise<T>;
         result: T;
     }
+    */
 }
 
-export async function pool(size: number, task: {(): Promise<boolean>}|Array<{(): Promise<void>}>): Promise<void> {
-    if (task instanceof Array) {
-        var tasks = task.slice(0);
-        await pool(size, async () => {
-            if (tasks.length > 0)
-                await tasks.shift().call(null);
-            return tasks.length > 0;
-        });
-    }
-    else {
+export async function pool(size: number, task: {(): Promise<boolean>}): Promise<void> {
         var active = 0;
         var done = false;
         var errors: Array<Error> = [];
@@ -106,11 +124,4 @@ export async function pool(size: number, task: {(): Promise<boolean>}|Array<{():
                 }
             }
         });
-    }
-}
-
-export class MultiError extends Error {
-    constructor(public list: Array<Error>) {
-        super(`${list.length} errors`);
-    }
 }

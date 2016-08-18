@@ -8,6 +8,25 @@ import {assert} from 'chai';
 describe('all', function () {    
     
     describe('Parallel', function () {
+
+        it('pool', async function () {
+            var n = 0;
+            var tasks = [
+                async function (): Promise<void> { n++; await sleep(10); n--; },
+                async function (): Promise<void> { n++; await sleep(11); n--; },
+                async function (): Promise<void> { n++; await sleep(12); n--; },
+                async function (): Promise<void> { n++; await sleep(13); n--; },
+                async function (): Promise<void> { n++; await sleep(12); n--; },
+                async function (): Promise<void> { n++; await sleep(11); n--; }
+            ];
+            await Parallel.pool(3, async () => {
+                var task = tasks.shift();
+                await task();
+                return tasks.length > 0;
+            });
+            assert(tasks.length === 0);
+            assert(n === 0);
+        });
         
         it('each', async function () {
             var list = [10, 20, 30];
@@ -19,7 +38,7 @@ describe('all', function () {
             });
             assert(result === 60);            
         });
-        
+
         it ('invoke', async function () {
             var result: number = 0;
             await Parallel.invoke([
@@ -48,38 +67,24 @@ describe('all', function () {
             assert(result.join(',') === '5,2,1,4');
         });
 
-        it('pool', async function () {
-            var n = 0;
-            var tasks = [
-                async function (): Promise<void> { n++; await sleep(10); n--; },
-                async function (): Promise<void> { n++; await sleep(11); n--; },
-                async function (): Promise<void> { n++; await sleep(12); n--; },
-                async function (): Promise<void> { n++; await sleep(13); n--; },
-                async function (): Promise<void> { n++; await sleep(12); n--; },
-                async function (): Promise<void> { n++; await sleep(11); n--; }
-            ];
-            await Parallel.pool(3, async () => {
-                var task = tasks.shift();
-                await task();
-                return tasks.length > 0;
-            });
-            assert(tasks.length === 0);
-            assert(n === 0);
+        it('each empty', async function () {
+            var flag = false;
+            await Parallel.each([], async (value) => flag = true);
+            assert(flag === false);
         });
 
-        it('pool', async function () {
-            var n = 0;
-            await Parallel.pool(3, [
-                async function (): Promise<void> { n++; await sleep(10); n--; },
-                async function (): Promise<void> { n++; await sleep(11); n--; },
-                async function (): Promise<void> { n++; await sleep(12); n--; },
-                async function (): Promise<void> { n++; await sleep(13); n--; },
-                async function (): Promise<void> { n++; await sleep(12); n--; },
-                async function (): Promise<void> { n++; await sleep(11); n--; }
-            ]);
-            assert(n === 0);
+        it('each null', async function () {
+            var flag = false;
+            await Parallel.each(null, async (value) => flag = true);
+            assert(flag === false);
         });
-        
+
+        it('each undefined', async function () {
+            var flag = false;
+            await Parallel.each(undefined, async (value) => flag = true);
+            assert(flag === false);
+        });
+                
     });
 });
 

@@ -35,7 +35,12 @@ var tasks = [
     async function (): Promise<void> { /* task #4 here */ },
     async function (): Promise<void> { /* task #5 here */ }
 ];
-await Parallel.pool(2, tasks);
+await Parallel.pool(2, async () => {
+    var task = tasks.shift();
+    await task();
+    return tasks.length > 0;
+});
+
 // all tasks complete here
 ```
 
@@ -98,5 +103,22 @@ sleep 300
 done 303
 ```
 
-## Additional Notes
-Setting Parallel.concurrency=1 causes all iterations to be performed in series to facilitate debugging/troubleshooting.
+## Concurrency
+The number of concurrent actions can be controlled globally using the Parallel.concurrency variable, or at the individual function level.
+
+* concurrency=0 is the default where the number of actions is equal to the size of the  
+* concurrency=1 causes all iterations to be performed in series (also helpful for debugging/troubleshooting).
+* concurrency>1 limits concurrency to the specified value.
+
+Examples:
+```js
+Parallel.concurrency = 10; // no more than 10 actions running at the same time 
+```
+
+```js
+var list = [100, 200, 300]; // provide list of inputs here
+await Parallel.each(list, async (item) => {
+    // process each item here
+}, {concurrency: 2}); // process no more than 2 items at the same time  
+```
+ 
