@@ -1,12 +1,5 @@
 import * as Parallel from './index';
 (async function (): Promise<void> {
-
-var list = [100, 200, 300]; // provide list of inputs here
-await Parallel.each(list, async (item) => {
-    // process each item here
-});
-
-
     var tasks = [
         async function (): Promise<void> { console.log('task #0 start'); await sleep(10); console.log('task #0 end'); },
         async function (): Promise<void> { console.log('task #1 start'); await sleep(11); console.log('task #1 end'); },

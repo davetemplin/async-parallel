@@ -70,32 +70,43 @@ export async function map<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}
     }
 }
 
-export async function pool(size: number, task: {(): Promise<boolean>}): Promise<void> {
-    var active = 0;
-    var done = false;
-    var errors: Array<Error> = [];
-    return new Promise<void>((resolve, reject) => {
-        next();
-        function next(): void {
-            while (active < size && !done) {
-                active += 1;
-                task()
-                    .then(more => {
-                        if (--active === 0 && (done || !more))
-                            errors.length === 0 ? resolve() : reject(new MultiError(errors));
-                        else if (more)
-                            next();
-                        else
+export async function pool(size: number, task: {(): Promise<boolean>}|Array<{(): Promise<void>}>): Promise<void> {
+    if (task instanceof Array) {
+        var tasks = task.slice(0);
+        await pool(size, async () => {
+            if (tasks.length > 0)
+                await tasks.shift().call(null);
+            return tasks.length > 0;
+        });
+    }
+    else {
+        var active = 0;
+        var done = false;
+        var errors: Array<Error> = [];
+        return new Promise<void>((resolve, reject) => {
+            next();
+            function next(): void {
+                while (active < size && !done) {
+                    active += 1;
+                    task()
+                        .then(more => {
+                            if (--active === 0 && (done || !more))
+                                errors.length === 0 ? resolve() : reject(new MultiError(errors));
+                            else if (more)
+                                next();
+                            else
+                                done = true;
+                        })
+                        .catch(err => {
+                            errors.push(err);
                             done = true;
-                    })
-                    .catch(err => {
-                        errors.push(err);
-                        if (--active === 0)
-                            reject(new MultiError(errors));
-                    });
+                            if (--active === 0)
+                                reject(new MultiError(errors));
+                        });
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 export class MultiError extends Error {

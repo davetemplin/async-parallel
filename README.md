@@ -27,20 +27,17 @@ var result = await Parallel.map(list, async (item) => {
 
 ## Parallel.pool example
 ```js
-// pool size of 2 with 3 tasks (no more than 2 tasks running at a time)
+// create several tasks, running no more than 2 at a time
 var tasks = [
-    async function (): Promise<void> { /* task #0*/ },
-    async function (): Promise<void> { /* task #1*/ },
-    async function (): Promise<void> { /* task #2*/ }
+    async function (): Promise<void> { /* task #1 here */ },
+    async function (): Promise<void> { /* task #2 here */ },
+    async function (): Promise<void> { /* task #3 here */ },
+    async function (): Promise<void> { /* task #4 here */ },
+    async function (): Promise<void> { /* task #5 here */ }
 ];
-await Parallel.pool(2, async () => {
-    var task = tasks.shift();
-    await task();
-    return tasks.length > 0;
-});
-// all tasks complete
+await Parallel.pool(2, tasks);
+// all tasks complete here
 ```
-
 
 
 ## Parallel.invoke example
@@ -63,7 +60,7 @@ await Parallel.invoke([
 Make sure you're running Node v4 and TypeScript 1.8 or higher...
 ```
 $ node -v
-v4.2.6
+v4.5.0
 $ npm install -g typescript
 $ tsc -v
 Version 1.8.10

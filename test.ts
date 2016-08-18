@@ -66,6 +66,20 @@ describe('all', function () {
             assert(tasks.length === 0);
             assert(n === 0);
         });
+
+        it('pool', async function () {
+            var n = 0;
+            await Parallel.pool(3, [
+                async function (): Promise<void> { n++; await sleep(10); n--; },
+                async function (): Promise<void> { n++; await sleep(11); n--; },
+                async function (): Promise<void> { n++; await sleep(12); n--; },
+                async function (): Promise<void> { n++; await sleep(13); n--; },
+                async function (): Promise<void> { n++; await sleep(12); n--; },
+                async function (): Promise<void> { n++; await sleep(11); n--; }
+            ]);
+            assert(n === 0);
+        });
+        
     });
 });
 
