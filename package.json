@@ -1,6 +1,6 @@
 {
   "name": "async-parallel",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Simplifies invoking tasks in parallel using TypeScript async/await",
   "main": "index.js",
   "scripts": {
