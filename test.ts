@@ -13,7 +13,7 @@ describe('all', function () {
             var list = [10, 20, 30];
             var result = 0;
             var start = new Date();
-            await Parallel.each(list, async function (value): Promise<void> {
+            await Parallel.each(list, async (value) => {
                 await sleep(value);
                 result += value;
             });
@@ -41,11 +41,30 @@ describe('all', function () {
         
         it('map', async function () {
             var list = [50, 20, 10, 40];
-            var result = await Parallel.map(list, async function (value): Promise<number> {
+            var result = await Parallel.map(list, async (value) => {
                 await sleep(value);
                 return value / 10;
             });
             assert(result.join(',') === '5,2,1,4');
+        });
+
+        it('pool', async function () {
+            var n = 0;
+            var tasks = [
+                async function (): Promise<void> { n++; await sleep(10); n--; },
+                async function (): Promise<void> { n++; await sleep(11); n--; },
+                async function (): Promise<void> { n++; await sleep(12); n--; },
+                async function (): Promise<void> { n++; await sleep(13); n--; },
+                async function (): Promise<void> { n++; await sleep(12); n--; },
+                async function (): Promise<void> { n++; await sleep(11); n--; }
+            ];
+            await Parallel.pool(3, async () => {
+                var task = tasks.shift();
+                await task();
+                return tasks.length > 0;
+            });
+            assert(tasks.length === 0);
+            assert(n === 0);
         });
     });
 });

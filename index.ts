@@ -67,5 +67,39 @@ export async function map<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}
         index: number;
         promise: Promise<T>;
         result: T;
-    }                    
+    }
+}
+
+export async function pool(size: number, task: {(): Promise<boolean>}): Promise<void> {
+    var active = 0;
+    var done = false;
+    var errors: Array<Error> = [];
+    return new Promise<void>((resolve, reject) => {
+        next();
+        function next(): void {
+            while (active < size && !done) {
+                active += 1;
+                task()
+                    .then(more => {
+                        if (--active === 0 && (done || !more))
+                            errors.length === 0 ? resolve() : reject(new MultiError(errors));
+                        else if (more)
+                            next();
+                        else
+                            done = true;
+                    })
+                    .catch(err => {
+                        errors.push(err);
+                        if (--active === 0)
+                            reject(new MultiError(errors));
+                    });
+            }
+        }
+    });
+}
+
+export class MultiError extends Error {
+    constructor(public list: Array<Error>) {
+        super(`${list.length} errors`);
+    }
 }
