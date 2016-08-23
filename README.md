@@ -3,7 +3,8 @@ Simplifies invoking tasks in parallel using TypeScript async/await.
 
 This package provides the following functions:
 * **Parallel.each** calls a provided function once per input in parallel   
-* **Parallel.map** creates a new array with the results of calling a provided function in parallel on every input, the order of the outputs will correspond to the inputs
+* **Parallel.map** creates a new array with the results of calling a provided function in parallel on every input, the output will be in the same order as the input
+* **Parallel.filter** creates a new array with all elements that pass the test implemented by the provided function in parallel, the output will be in the same order as the input
 * **Parallel.invoke** calls a set of provided functions in parallel
 * **Parallel.pool** creates a fixed size pool of actins fetching tasks until a false result is obtained, and returns when the pool is drained to zero   
 
@@ -24,6 +25,15 @@ var result = await Parallel.map(list, async (item) => {
 // result available here
 ```
 
+## Parallel.filter example
+```js
+var list = [100, 200, 300]; // provide list of inputs here
+var result = await Parallel.filter(list, async (item) => {
+    // test each item here returning true to include or false to reject
+});
+// result available here
+```
+
 ## Parallel.invoke example
 ```js
 await Parallel.invoke([
@@ -34,7 +44,8 @@ await Parallel.invoke([
     async () => { /* task #5 here */ }
 ]);
 ```
-Note the same result can be achieved without a library using `Promise.all`, however `Parallel.invoke` also supports pooling as discussed below.
+Note the same result can be achieved without a library using `Promise.all`, however `Parallel.invoke` provides an ability to limit concurrency as discussed below.
+
 
 ## Parallel.pool example
 ```js

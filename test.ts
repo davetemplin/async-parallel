@@ -67,6 +67,15 @@ describe('all', function () {
             assert(result.join(',') === '5,2,1,4');
         });
 
+        it('filter', async function () {
+            var list = [51, 50, 20, 21, 10, 40, 41];
+            var result = await Parallel.filter(list, async (value) => {
+                await sleep(value);
+                return value % 10 === 0;
+            });
+            assert(result.join(',') === '50,20,10,40');
+        });
+
         it('each empty', async function () {
             var flag = false;
             await Parallel.each([], async (value) => flag = true);
