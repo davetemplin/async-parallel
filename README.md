@@ -1,7 +1,7 @@
 # async-parallel
-Asynchronous versions of each(), map(), filter() that work just like their standard counterparts, but can be used with async/await and also provide concurrency limiting.
+Async enabled each(), map(), filter() functions that work just like their standard counterparts, but can be used with async/await and also provide concurrency limiting. Includes built-in typings and JSDoc comments for IntelliSense documentation.
 
-The following async iterative functions are provided:
+The following iterative functions are provided:
 
 * **Parallel.each** calls a provided function once per input in parallel.
 * **Parallel.map** creates a new array with the results of calling a provided function in parallel on every input, the output will be in the same order as the input.
@@ -162,3 +162,138 @@ await Parallel.pool(2, async () => {
 });
 // all actions are complete here
 ```
+
+# Reference
+
+## each
+
+Calls a provided function once per input in parallel.
+
+`each<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}, concurrency?: number): Promise<void>`
+
+| Parameter   | Type           | Description                                                                 |
+| ----------- | -------------- | --------------------------------------------------------------------------- |
+| list        | (generic)      | A list of input elements to iterate.                                        |
+| action      | function       | An async function callback invoked for each element in the list. The callback takes three arguments: the current element being processed, the index of the current element, and the input list. |
+| concurrency | number         | Limits the number of callback actions to run concurrently.                  |
+
+
+## every
+
+Tests whether all elements in the array pass the test implemented by the provided function.
+
+`every<T>(list: T[], action: {(value: T, index: number, list: T[]): Promise<boolean>}, concurrency?: number): Promise<boolean>`
+
+| Parameter  | Type            | Description                                                                 |
+| ---------- | --------------- | --------------------------------------------------------------------------- |
+| list       | (generic)       | A list of input elements to test.                                           |
+| action     | function        | An async function callback invoked for each element in the list. The callback takes three arguments: the current element being processed, the index of the current element, and the input list. The callback resolves to true for elements that pass the test. |
+| concurrency | number         | Limits the number of callback actions to run concurrently.                  |
+
+Returns true if every test resolved to true, otherwise false.
+
+## filter
+
+Creates a new array with all elements that pass the test implemented by the provided function in parallel.
+
+`filter<T>(list: T[], action: {(value: T, index: number, list: T[]): Promise<boolean>}, concurrency?: number): Promise<T[]>`
+
+| Parameter  | Type            | Description                                                                 |
+| ---------- | --------------- | --------------------------------------------------------------------------- |
+| list       | (generic)       | A list of input elements to test.                                           |
+| action     | function        | An async function callback invoked for each element in the list. The callback takes three arguments: the current element being processed, the index of the current element, and the input list. The callback resolves to true for elements to be included in the output list. |
+| concurrency | number         | Limits the number of callback actions to run concurrently.                  |
+
+Returns a list of filtered elements in the same order as the input.
+
+## invoke
+
+Calls a set of provided functions in parallel.
+
+`invoke(list: {(): Promise<void>}[], concurrency?: number): Promise<void>`
+
+| Parameter  | Type            | Description                                                                 |
+| ---------- | --------------- | --------------------------------------------------------------------------- |
+| list       | function[]      | A list of async function callbacks to invoke. The callback takes no arguments and resolves to a void. |
+| concurrency | number         | Limits the number of callback actions to run concurrently.                  |
+
+
+## map
+
+Creates a new array with the results of calling a provided function in parallel on every input.
+The output will be in the same order as the input.
+
+`map<T1, T2>(list: T1[], action: {(value: T1, index: number, list: T1[]): Promise<T2>}, concurrency?: number): Promise<T2[]>`
+
+| Parameter   | Type            | Description                                                                 |
+| ----------- | --------------- | --------------------------------------------------------------------------- |
+| list        | (generic)       | A list of input elements to map.                                            |
+| action      | function        | An async function callback that produces an element of the output list.  The callback takes three arguments: the current element being processed, the index of the current element, and the input list. The callback resolves to a single output element. |
+| concurrency | number          | Limits the number of callback actions to run concurrently. |
+
+Returns a list of mapped elements in the same order as the input.
+
+
+## pool
+
+Repeatedly invokes a provided async function that resolves to a boolean result.
+A pool of parallel instances is maintained until a true result is obtained, after which no new instances will be invoked.
+
+`pool(size: number, task: {(): Promise<boolean>}): Promise<void>`
+
+| Parameter | Type     | Description                                                                                                            |
+| --------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| size      | number   | Specifies the size of the pool indicating the number of parallel instances of the provided async function to maintain. |
+| task      | function | The provided async function callback that takes no arguments and resolves to a boolean. Returning true indicates no new instances should be invoked. |
+
+## reduce
+
+Applies a function against an accumulator and each value of the array (from left-to-right) to reduce it to a single value.
+
+`reduce<T1, T2>(list: T1[], action: {(accumulator: T2, value: T1, index: number, list: T1[]): Promise<T2>}, value: T2, concurrency?: number): Promise<T2>`
+
+| Parameter    | Type      | Description                                                                 |
+| ------------ | --------- | --------------------------------------------------------------------------- |
+| list         | (generic) | A list of input elements to reduce. |
+| action       | function  | An async function callback invoked for each element in the list. The callback takes four arguments: the accumulated value previously returned in the last invocation of the callback or initialValue, the current element being processed, the index of the current element, and the input list. The callback resolves to an updated accumulated value. |
+| initialValue | (generic) | Value to use as the first argument to the first call of the callback. |
+| concurrency  | number    | Limits the number of callback actions to run concurrently. |
+
+Returns the value that results from the reduction.
+
+## setConcurrency
+
+Sets a default that limits the number of concurrent callback actions for all parallel functions.
+Specifying the concurrency at the function level supercedes this setting.
+
+`setConcurrency(value: number): void`
+
+| Parameter  | Type            | Description                                                                 |
+| ---------- | --------------- | --------------------------------------------------------------------------- |
+| value      | number          | Specifies the new default concurrency setting.                              |
+
+
+## sleep
+
+Sleeps for the specified duration.
+
+`sleep(milliseconds: number): Promise<void>`
+
+| Parameter  | Type            | Description                                                                 |
+| ------------ | ------------- | --------------------------------------------------------------------------- |
+| milliseconds | number        | The amount of time to sleep in milliseconds.                                |
+
+
+## some
+
+Tests whether some element in the array passes the test implemented by the provided function.
+
+`some<T>(list: T[], action: {(value: T, index: number, list: T[]): Promise<boolean>}, concurrency?: number): Promise<boolean>`
+
+| Parameter   | Type           | Description                                                                 |
+| ----------- | -------------- | --------------------------------------------------------------------------- |
+| list        | (generic)      | A list of input elements to test.                                           |
+| action      | function       | An async function callback invoked for each element in the list. The callback takes three arguments: the current element being processed, the index of the current element, and the input list. The callback resolves to true for elements that pass the test. |
+| concurrency | number         | Limits the number of callback actions to run concurrently.                  |
+
+Returns true if some (at least one) test resolved to true, otherwise false.

@@ -78,7 +78,7 @@ export async function every<T>(list: T[], action: {(value: T, index: number, lis
  * Creates a new array with all elements that pass the test implemented by the provided function in parallel.
  * The output will be in the same order as the input.
  * @param list A list of input elements to test.
- * @param action An async function callback invoked for each element in the list.  The callback takes three arguments: the current element being processed, the index of the current element, and the input list. The callback resolves to true for elements to be included in the output list.
+ * @param action An async function callback invoked for each element in the list. The callback takes three arguments: the current element being processed, the index of the current element, and the input list. The callback resolves to true for elements to be included in the output list.
  * @param options Limits the number of callback actions to run concurrently.
  * @returns A list of filtered elements in the same order as the input.
  */
