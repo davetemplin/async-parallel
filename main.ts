@@ -1,5 +1,6 @@
 import * as Parallel from './index';
-(async function (): Promise<void> {
+
+(async function () {
     var tasks = [
         async function (): Promise<void> { console.log('task #0 start'); await sleep(10); console.log('task #0 end'); },
         async function (): Promise<void> { console.log('task #1 start'); await sleep(11); console.log('task #1 end'); },

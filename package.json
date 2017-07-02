@@ -1,10 +1,11 @@
 {
   "name": "async-parallel",
-  "version": "1.0.7",
-  "description": "Simplifies invoking tasks in parallel using TypeScript async/await",
+  "version": "1.1.0",
+  "description": "Asynchronous versions of each(), map(), filter() that work just like their standard counterparts, but can be used with async/await and also provide concurrency limiting.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node main.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,14 @@
     "each",
     "map",
     "invoke",
-    "foreach"
+    "foreach",
+    "filter",
+    "every",
+    "reduce",
+    "some",
+    "asynchronous",
+    "iterative",
+    "concurrency"
   ],
   "author": {
     "name": "Dave Templin",
@@ -32,6 +40,9 @@
   },
   "homepage": "https://github.com/davetemplin/async-parallel#readme",
   "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.37",
+    "@types/node": "^7.0.0",
     "chai": "^3.4.1",
     "mocha": "^2.3.4"
   }

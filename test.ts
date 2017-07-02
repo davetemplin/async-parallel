@@ -2,6 +2,7 @@
 // Written by: Dave Templin <https://github.com/davetemplin/>
 
 import * as Parallel from './index';
+import {sleep} from './index';
 import * as path from 'path';
 import {assert} from 'chai';
 
@@ -96,9 +97,3 @@ describe('all', function () {
                 
     });
 });
-
-async function sleep(milliseconds: number): Promise<void> {
-    return new Promise<void>(resolve => 
-        setTimeout(() => 
-            resolve(), milliseconds));
-}
