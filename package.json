@@ -12,11 +12,18 @@
     "url": "git+https://github.com/davetemplin/async-parallel.git"
   },
   "keywords": [
+    "asynchronous",
     "async",
     "await",
+    "await-await",
+    "await/await",
+    "concurrent",
+    "concurrency",
+    "parallel",
     "typescript",
     "promise",
-    "parallel",
+    "promisify",
+    "promisified",
     "each",
     "map",
     "invoke",
@@ -25,9 +32,8 @@
     "every",
     "reduce",
     "some",
-    "asynchronous",
     "iterative",
-    "concurrency"
+    "functions"
   ],
   "author": {
     "name": "Dave Templin",
