@@ -3,3 +3,4 @@ typings
 *.js
 *.js.map
 *.d.ts
+*.log

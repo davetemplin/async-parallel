@@ -23,7 +23,7 @@ The following additional utility functions are also provided:
 ## Parallel.each example
 ```js
 var list = [100, 200, 300]; // provide list of inputs here
-await Parallel.each(list, async (item) => {
+await Parallel.each(list, async item => {
     // process each item here
 });
 ```
@@ -31,7 +31,7 @@ await Parallel.each(list, async (item) => {
 ## Parallel.map example
 ```js
 var list = [100, 200, 300]; // provide list of inputs here
-var result = await Parallel.map(list, async (item) => {
+var result = await Parallel.map(list, async item => {
     // process each item here
 });
 // result available here
@@ -40,7 +40,7 @@ var result = await Parallel.map(list, async (item) => {
 ## Parallel.filter example
 ```js
 var list = [100, 200, 300]; // provide list of inputs here
-var result = await Parallel.filter(list, async (item) => {
+var result = await Parallel.filter(list, async item => {
     // test each item here returning true to include or false to reject
 });
 // result available here
@@ -82,7 +82,7 @@ import * as Parallel from 'async-parallel';
 (async function () {
     var list = [100, 200, 300];
     var start = new Date();
-    await Parallel.each(list, async (value) => {
+    await Parallel.each(list, async value => {
         await Parallel.sleep(value);
         console.log('sleep', value);
     });
@@ -109,7 +109,7 @@ The number of concurrent actions can be limited at the function level, or by cal
 
 Examples:
 ```js
-await Parallel.each([100, 200, 300], async (item) => {
+await Parallel.each([100, 200, 300], async item => {
     // process each item here
 }, 2); // process no more than 2 items at the same time  
 ```
