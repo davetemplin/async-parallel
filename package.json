@@ -1,6 +1,6 @@
 {
   "name": "async-parallel",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Async enabled each(), map(), filter() functions that work just like their standard counterparts, but can be used with async/await and also provide concurrency limiting. Includes built-in typings and JSDoc comments for IntelliSense documentation.",
   "main": "index.js",
   "scripts": {
