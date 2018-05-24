@@ -4,3 +4,4 @@ typings
 *.js.map
 *.d.ts
 *.log
+package-lock.json

@@ -4,6 +4,7 @@
   "description": "Async enabled each(), map(), filter() functions that work just like their standard counterparts, but can be used with async/await and also provide concurrency limiting. Includes built-in typings and JSDoc comments for IntelliSense documentation.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "mocha",
     "start": "node main.js"
   },
@@ -50,6 +51,7 @@
     "@types/mocha": "^2.2.37",
     "@types/node": "^7.0.0",
     "chai": "^3.4.1",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "typescript": "^2.8.3"
   }
 }
