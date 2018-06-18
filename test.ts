@@ -22,7 +22,8 @@ describe('all', function () {
             ];
             await Parallel.pool(3, async () => {
                 var task = tasks.shift();
-                await task();
+                if (task)
+                    await task();
                 return tasks.length > 0;
             });
             assert(tasks.length === 0);
@@ -79,19 +80,19 @@ describe('all', function () {
 
         it('each empty', async function () {
             var flag = false;
-            await Parallel.each([], async (value) => flag = true);
+            await Parallel.each([], async () => flag = true);
             assert(flag === false);
         });
 
         it('each null', async function () {
             var flag = false;
-            await Parallel.each(null, async (value) => flag = true);
+            await Parallel.each(<any>null, async () => flag = true);
             assert(flag === false);
         });
 
         it('each undefined', async function () {
             var flag = false;
-            await Parallel.each(undefined, async (value) => flag = true);
+            await Parallel.each(<any>undefined, async () => flag = true);
             assert(flag === false);
         });
                 

@@ -4,7 +4,5 @@ test
 test.*
 main.*
 tsconfig.json
-tsd.json
-typings
 .vscode
 *.log

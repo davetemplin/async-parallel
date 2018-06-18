@@ -17,7 +17,7 @@ Every function above provides a `concurrency` parameter to limit the maximum num
 The following additional utility functions are also provided:
 
 * **Parallel.invoke** calls a set of provided functions in parallel.
-* **Parallel.pool** maintains a pool of parallel instances of a provided function until a specified result is obtained.
+* **Parallel.pool** maintains a pool of parallel instances of a provided function until `false` is returned.
 * **Parallel.sleep** sleeps for the specified duration.
 
 ## Parallel.each example
@@ -57,7 +57,7 @@ await Parallel.invoke([
 ], 2);
 ```
 > Note: The same result can be achieved without a library using `Promise.all`, however `Parallel.invoke` provides an ability to limit the concurrency.
-Therefore, in example above only 2 of the tasks will be run at the same time.
+Therefore, in the example above only 2 of the tasks will be run at the same time.
 
 
 ## Getting Started
@@ -165,11 +165,12 @@ await Parallel.pool(2, async () => {
 
 # Reference
 
+
 ## each
 
 Calls a provided function once per input in parallel.
 
-`each<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}, concurrency?: number): Promise<void>`
+`each<T1, T2>(list: T1[], action: {(value: T1, index: number, list: T1[]): Promise<T2>}, concurrency?: number): Promise<void>`
 
 | Parameter   | Type           | Description                                                                 |
 | ----------- | -------------- | --------------------------------------------------------------------------- |
@@ -212,10 +213,10 @@ Calls a set of provided functions in parallel.
 
 `invoke(list: {(): Promise<void>}[], concurrency?: number): Promise<void>`
 
-| Parameter  | Type            | Description                                                                 |
-| ---------- | --------------- | --------------------------------------------------------------------------- |
-| list       | function[]      | A list of async function callbacks to invoke. The callback takes no arguments and resolves to a void. |
-| concurrency | number         | Limits the number of callback actions to run concurrently.                  |
+| Parameter   | Type            | Description                                                                 |
+| ----------- | --------------- | --------------------------------------------------------------------------- |
+| list        | function[]      | A list of async function callbacks to invoke. The callback takes no arguments and resolves to a void. |
+| concurrency | number          | Limits the number of callback actions to run concurrently.                  |
 
 
 ## map
@@ -236,15 +237,16 @@ Returns a list of mapped elements in the same order as the input.
 
 ## pool
 
-Repeatedly invokes a provided async function that resolves to a boolean result.
-A pool of parallel instances is maintained until a true result is obtained, after which no new instances will be invoked.
+Repeatedly invokes a provided async function until `false` is returned, after which no new instances will be invoked.
+The function should return a boolean result where `true` indicates **more** iterations should be performed, and `false` indicates that no more iterations should be performed.
 
 `pool(size: number, task: {(): Promise<boolean>}): Promise<void>`
 
 | Parameter | Type     | Description                                                                                                            |
 | --------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
 | size      | number   | Specifies the size of the pool indicating the number of parallel instances of the provided async function to maintain. |
-| task      | function | The provided async function callback that takes no arguments and resolves to a boolean. Returning true indicates no new instances should be invoked. |
+| task      | function | The provided async function callback that takes no arguments and resolves to a boolean. Return `true` to continue, or `false` when all processing is complete. |
+
 
 ## reduce
 
@@ -260,6 +262,7 @@ Applies a function against an accumulator and each value of the array (from left
 | concurrency  | number    | Limits the number of callback actions to run concurrently. |
 
 Returns the value that results from the reduction.
+
 
 ## setConcurrency
 

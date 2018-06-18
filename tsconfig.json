@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "noImplicitAny": true,
+    "target": "esnext",
+    "strict": true,
     "removeComments": true,
     "preserveConstEnums": false,
     "sourceMap": true,
-    "declaration": true,
-    "target": "es6"
+    "declaration": true
   },
   "files": [
-    "typings/tsd.d.ts",
     "index.ts",
     "main.ts",
     "test.ts"

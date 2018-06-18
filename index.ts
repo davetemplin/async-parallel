@@ -37,19 +37,18 @@ export function setConcurrency(value: number): void {
  * @param action An async function callback invoked for each element in the list. The callback takes three arguments: the current element being processed, the index of the current element, and the input list.
  * @param options Limits the number of callback actions to run concurrently.
  */
-export async function each<T1, T2>(list: T1[], action: {(value: T1): Promise<T2>}, options?: Options|number): Promise<void> {
+export async function each<T1, T2>(list: T1[], action: {(value: T1, index: number, list: T1[]): Promise<T2>}, options?: Options|number): Promise<void> {
     if (list && list.length > 0) {
         list = list.slice(0);
         var size = resolveOptions(options).concurrency || list.length;
+        var i = 0;
         await pool(size, async () => {
             if (list.length > 0)
-                await action(list.shift());
+                await action(list.shift()!, i++, list);
             return list.length > 0;
         });
     }
 }
-
-
 
 /**
  * Tests whether all elements in the array pass the test implemented by the provided function.
@@ -66,7 +65,7 @@ export async function every<T>(list: T[], action: {(value: T, index: number, lis
         var i = 0;
         await pool(size, async () => {
             if (list.length > 0)
-                if (!await action(list.shift(), i++, list))
+                if (!await action(list.shift()!, i++, list))
                     result = false;
             return !result || list.length > 0;
         });
@@ -92,8 +91,8 @@ export async function filter<T>(list: T[], action: {(value: T, index: number, li
             if (clone.length > 0) {
                 var j = i++;
                 var value = clone.shift();
-                if (await action(value, i, clone))
-                    result[j] = value;
+                if (await action(value!, i, clone))
+                    result[j] = value!;
             }
             return clone.length > 0;
         });
@@ -106,16 +105,21 @@ export async function filter<T>(list: T[], action: {(value: T, index: number, li
  * @param list A list of async function callbacks to invoke. The callback takes no arguments and resolves to a void.
  * @param options Limits the number of callback actions to run concurrently.
  */
-export async function invoke(list: {(): Promise<void>}[], options?: Options|number): Promise<void> {
+export async function invoke<T=any>(list: {(): Promise<T>}[], options?: Options|number): Promise<T[]> {
+    var result: T[] = [];
     if (list && list.length > 0) {
         list = list.slice(0);
         var size = resolveOptions(options).concurrency || list.length;
-        await pool(size, async () => {
-            if (list.length > 0)
-                await list.shift().call(this);
+        var i = 0;
+        await pool(size, async function (this: any) {
+            if (list.length > 0) {
+                var j = i++;
+                result[j] = await list.shift()!.call(this);
+            }
             return list.length > 0;
         });
     }
+    return result;
 }
 
 /**
@@ -135,7 +139,7 @@ export async function map<T1, T2>(list: T1[], action: {(value: T1, index: number
         await pool(size, async () => {
             if (list.length > 0) {
                 var j = i++;
-                result[j] = await action(list.shift(), j, list);
+                result[j] = await action(list.shift()!, j, list);
             }
             return list.length > 0;
         });
@@ -144,11 +148,10 @@ export async function map<T1, T2>(list: T1[], action: {(value: T1, index: number
 }
 
 /**
- * Repeatedly invokes a provided async function that resolves to a boolean result.
- * A pool of parallel instances is maintained until a true result is obtained, after which no new instances will be invoked.
+ * Repeatedly invokes a provided async function until `false` is returned, after which no new instances will be invoked.
  * The overall operation is resolved when all existing instances have been resolved.
  * @param size Specifies the size of the pool indicating the number of parallel instances of the provided async function to maintain.
- * @param task The provided async function callback that takes no arguments and resolves to a boolean. Returning true indicates no new instances should be invoked.
+ * @param task The provided async function callback that takes no arguments and resolves to a boolean. Return `true` to continue, or `false` when all processing is complete.
  */
 export async function pool(size: number, task: {(): Promise<boolean>}): Promise<void> {
         var active = 0;
@@ -195,7 +198,7 @@ export async function reduce<T1, T2>(list: T1[], action: {(accumulator: T2, valu
         var i = 0;
         await pool(size, async () => {
             if (list.length > 0)
-                result = await action(result, list.shift(), i++, list);
+                result = await action(result, list.shift()!, i++, list);
             return list.length > 0;
         });
     }
@@ -227,7 +230,7 @@ export async function some<T>(list: T[], action: {(value: T, index: number, list
         var i = 0;
         await pool(size, async () => {
             if (list.length > 0)
-                if (await action(list.shift(), i++, list))
+                if (await action(list.shift()!, i++, list))
                     result = true;
             return result || list.length > 0;
         });
